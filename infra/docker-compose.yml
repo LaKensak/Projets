@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  rtmp:
+    build:
+      context: .
+      dockerfile: rtmp/Dockerfile
+    container_name: streamcircle-rtmp
+    restart: unless-stopped
+    ports:
+      - "1935:1935"
+      - "8080:8080"
+    volumes:
+      - ../data/hls:/data/hls
+    environment:
+      - TZ=Europe/Paris
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: streamcircle-backend
+    restart: unless-stopped
+    env_file:
+      - ../backend/.env
+    ports:
+      - "4000:4000"
+    volumes:
+      - ../data:/data
+    depends_on:
+      - rtmp
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:4000
+        VITE_BACKEND_SOCKET_URL: http://localhost:4000
+    container_name: streamcircle-frontend
+    restart: unless-stopped
+    env_file:
+      - ../frontend/.env
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+networks:
+  default:
+    name: streamcircle-net
