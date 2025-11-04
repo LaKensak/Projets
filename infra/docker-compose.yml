@@ -14,6 +14,8 @@ services:
       - ../data/hls:/data/hls
     environment:
       - TZ=Europe/Paris
+    depends_on:
+      - backend
 
   backend:
     build:
@@ -27,8 +29,6 @@ services:
       - "4000:4000"
     volumes:
       - ../data:/data
-    depends_on:
-      - rtmp
 
   frontend:
     build:

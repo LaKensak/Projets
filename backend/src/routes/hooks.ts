@@ -15,7 +15,7 @@ function extractStreamKey(req: any): string | null {
   return null;
 }
 
-router.post(
+router.all(
   "/publish",
   asyncHandler(async (req, res) => {
     const streamKey = extractStreamKey(req);
@@ -43,7 +43,7 @@ router.post(
   })
 );
 
-router.post(
+router.all(
   "/done",
   asyncHandler(async (req, res) => {
     const streamKey = extractStreamKey(req);
